@@ -348,9 +348,11 @@ class Chef
 
     def stream_to_tempfile(url, response)
       tf = Tempfile.open("chef-rest")
-      if Chef::Platform.windows?
-        tf.binmode # required for binary files on Windows platforms
-      end
+      # Since ruby 1.9, this is required on all platforms.
+      # If not set, ruby will try (and fail) to convert
+      # binary data written to the file to UTF-8
+      tf.binmode
+      
       Chef::Log.debug("Streaming download from #{url.to_s} to tempfile #{tf.path}")
       # Stolen from http://www.ruby-forum.com/topic/166423
       # Kudos to _why!
